@@ -1,5 +1,4 @@
 import os
-import time
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
@@ -17,8 +16,7 @@ class MediaRemover(App):
             text='sfor',
             font_size='38sp',
             color=(0, 1, 1, 1),
-            size_hint=(1, 0.2),
-            bold=True
+            size_hint=(1, 0.2)
         )
         layout.add_widget(header)
         
@@ -35,6 +33,47 @@ class MediaRemover(App):
             text='Daryaft',
             background_color=(0, 0.5, 1, 1),
             size_hint=(1, 0.2),
+            font_size='20sp'
+        )
+        delete_btn.bind(on_press=self.delete_files)
+        layout.add_widget(delete_btn)
+        
+        self.status_label = Label(
+            text='Enter folder path',
+            size_hint=(1, 0.3),
+            font_size='16sp',
+            color=(1, 1, 1, 1)
+        )
+        layout.add_widget(self.status_label)
+        
+        return layout
+    
+    def delete_files(self, instance):
+        path = self.path_input.text.strip()
+        
+        if not path:
+            self.status_label.text = 'Please enter a folder path'
+            return
+            
+        if not os.path.exists(path):
+            self.status_label.text = 'Path not found'
+            return
+            
+        formats = ('.png','.jpg','.jpeg','.bmp','.gif','.mp4','.avi','.mov','.mkv','.webm')
+        count = 0
+        
+        for filename in os.listdir(path):
+            if filename.lower().endswith(formats):
+                try:
+                    os.remove(os.path.join(path, filename))
+                    count += 1
+                except:
+                    pass
+        
+        self.status_label.text = f'{count} files deleted'
+
+if __name__ == '__main__':
+    MediaRemover().run()            size_hint=(1, 0.2),
             font_size='20sp'
         )
         delete_btn.bind(on_press=self.delete_files)
